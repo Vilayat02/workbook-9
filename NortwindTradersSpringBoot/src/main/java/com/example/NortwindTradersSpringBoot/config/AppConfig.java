@@ -18,6 +18,7 @@ public class AppConfig {
         basicDataSource.setUrl(url);
         basicDataSource.setUsername(username);
         basicDataSource.setPassword(password);
+        basicDataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
 
         return basicDataSource;
     }
