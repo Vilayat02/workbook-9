@@ -1,59 +1,44 @@
 package com.example.NortwindTradersSpringBoot.dao;
 
-import com.example.NortwindTradersSpringBoot.model.Category;
 import com.example.NortwindTradersSpringBoot.model.Customer;
+import com.example.NortwindTradersSpringBoot.model.Product;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class CustomerDAOJDBCImpl implements CustomerDAO {
-    private List<Customer> customers;
+public class ProductDAOJDBCImpl implements ProductDAO{
+
+    private List<Product> products;
     private DataSource dataSource;
 
-    public CustomerDAOJDBCImpl(DataSource dataSource) {
-        this.customers = new ArrayList<>();
+    public ProductDAOJDBCImpl(DataSource dataSource) {
+        this.products = new ArrayList<>();
         this.dataSource = dataSource;
     }
 
 
     @Override
-    public List<Customer> getAll() {
-        this.customers.clear();
-        String sql = "SELECT CustomerID, CompanyName, ContactName, ContactTitle FROM Customers;";
-        try (Connection connection = dataSource.getConnection()) {
+    public List<Product> getAll() {
+        this.products.clear();
+        String sql = "SELECT ProductID, ProductName, CategoryID, UnitPrice FROM Products;";
+        try(Connection connection = dataSource.getConnection()){
             PreparedStatement statement = connection.prepareStatement(sql);
             ResultSet rows = statement.executeQuery();
-            while (rows.next()) {
-                this.customers.add(new Customer(rows.getString(1), rows.getString(2), rows.getString(3), rows.getString(4)));
+            while(rows.next()){
+                this.products.add(new Product(rows.getInt(1), rows.getString(2), rows.getInt(3),rows.getBigDecimal(4)));
             }
-        } catch (SQLException e) {
+        }
+        catch (SQLException e){
             e.printStackTrace();
         }
-        return this.customers;
-    }
-
-    @Override
-    public List<Customer> getByCompanyName() {
-        return List.of();
-    }
-
-    @Override
-    public List<Customer> getByContactName() {
-        return List.of();
-    }
-
-    @Override
-    public List<Customer> getByAddress() {
-        return List.of();
-    }
-
-    @Override
-    public Customer getByCustomerID() {
-        return null;
+        return this.products;
     }
 
     @Override
@@ -62,7 +47,7 @@ public class CustomerDAOJDBCImpl implements CustomerDAO {
     }
 
     @Override
-    public void add(Customer customer) {
+    public void add(Product product) {
         Customer createdCustomer = null;
         String sql = "INSERT INTO Customers (CompanyName, ContactName, ContactTitle) VALUES (?, ?, ?)";
         try (Connection connection = dataSource.getConnection()) {
@@ -82,9 +67,5 @@ public class CustomerDAOJDBCImpl implements CustomerDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    private Customer getByCustomerID(String string) {
-        return null;
     }
 }
